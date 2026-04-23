@@ -1,17 +1,38 @@
 const express = require('express');
 const http = require('http');
+const { Server } = require("socket.io");
+
 const app = express();
 const server = http.createServer(app);
 
-// Use Render's port or 10000 as a backup
-const port = process.env.PORT || 10000;
+// CHANGE THIS: Set your desired path here (must start with /)
+const CUSTOM_PATH = "/1000"; 
 
-// This is the part that was missing!
-server.listen(port, '0.0.0.0', () => {
-    console.log(`Server is online at port ${port}`);
+const io = new Server(server, {
+    path: CUSTOM_PATH, // This tells the server to only listen on this path
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+        credentials: true
+    },
+    allowEIO3: true
 });
 
-// Basic message so you know it's working
 app.get('/', (req, res) => {
-    res.send('Club Penguin Server is Running!');
+    res.send(`<h1>Server is running</h1><p>Socket path is set to: ${CUSTOM_PATH}</p>`);
+});
+
+io.on('connection', (socket) => {
+    console.log(`Penguin connected via ${CUSTOM_PATH}`);
+    
+    socket.emit('message', { status: 'connected' });
+
+    socket.on('disconnect', () => {
+        console.log('Penguin disconnected');
+    });
+});
+
+const PORT = process.env.PORT || 10000;
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server online. Internal Port: ${PORT} | Socket Path: ${CUSTOM_PATH}`);
 });
