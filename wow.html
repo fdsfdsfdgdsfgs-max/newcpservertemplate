@@ -1,0 +1,87 @@
+using System;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Microsoft.Web.WebView2.Core;
+
+namespace steamauth
+{
+    public partial class Form1 : Form
+    {
+        private string htmlFilePath;
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private async void Form1_Load(object sender, EventArgs e)
+        {
+            await InitializeWebViewAsync();
+        }
+
+        private async Task InitializeWebViewAsync()
+        {
+            try
+            {
+                // Create AppData folder
+                string appDataPath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "SteamAuth");
+
+                Directory.CreateDirectory(appDataPath);
+                htmlFilePath = Path.Combine(appDataPath, "login.html");
+
+                // Download with improved SSL settings
+                await DownloadHtmlFile("https://your-website.com/steam-login.html"); 
+                // ← CHANGE TO YOUR ACTUAL HTML URL
+
+                await LoadHtmlIntoWebView();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task DownloadHtmlFile(string url)
+        {
+            // Fix SSL/TLS errors
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
+
+            using (HttpClientHandler handler = new HttpClientHandler())
+            {
+                handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true; // Bypass for now (use only for testing)
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                    string htmlContent = await client.GetStringAsync(url);
+                    File.WriteAllText(htmlFilePath, htmlContent);
+                }
+            }
+        }
+
+        private async Task LoadHtmlIntoWebView()
+        {
+            await webView2.EnsureCoreWebView2Async(null);
+
+            string fileUri = new Uri(htmlFilePath).AbsoluteUri;
+            webView2.CoreWebView2.Navigate(fileUri);
+
+            webView2.NavigationCompleted += WebView2_NavigationCompleted;
+        }
+
+        private void WebView2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        {
+            string url = webView2.Source.ToString();
+
+            if (url.Contains("pussy+vs+condum+who+wins"))
+            {
+                MessageBox.Show("Sign In button clicked!", "Success");
+            }
+        }
+    }
+}
